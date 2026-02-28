@@ -12,91 +12,91 @@
 
     <style>
         :root { --bg-color: #f4f4f9; --surface: #ffffff; --text-main: #1e293b; --text-muted: #64748b; --accent: #6366f1; --accent-hover: #4f46e5; --success: #22c55e; --success-light: #dcfce7; --danger: #ef4444; --danger-light: #fee2e2; --border: #e2e8f0; --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); --radius: 12px; }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background-color: var(--bg-color); color: var(--text-main); line-height: 1.6; }
-        .container { max-width: 900px; margin: 0 auto; padding: 20px; }
-        .view { display: none; opacity: 0; transition: opacity 0.3s ease; }
-        .view.active { display: block; opacity: 1; }
-        h1 { font-size: 2rem; margin-bottom: 1rem; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); line-height: 1.6; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; }
+        .view { display: none; } .view.active { display: block; }
         button { cursor: pointer; border: none; border-radius: var(--radius); font-size: 1rem; font-weight: 600; padding: 12px 20px; transition: all 0.2s; }
-        .btn-primary { background: var(--accent); color: white; }
+        .btn-primary { background: var(--accent); color: white; width: 100%; margin-top: 10px; }
         .btn-secondary { background: var(--surface); color: var(--text-main); border: 1px solid var(--border); }
-        .btn-danger { background: var(--danger-light); color: var(--danger); }
+        .btn-danger { background: var(--danger-light); color: var(--danger); font-size: 0.8rem; padding: 5px 10px; }
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; margin-top: 20px; }
-        .card { background: var(--surface); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); }
-        .drop-zone { border: 2px dashed var(--accent); border-radius: var(--radius); padding: 30px; text-align: center; background: rgba(99, 102, 241, 0.05); margin-bottom: 20px; }
-        .form-control { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 10px; }
-        .progress-bar { width: 100%; height: 8px; background: var(--border); border-radius: 4px; margin-bottom: 20px; overflow: hidden; }
+        .card { background: var(--surface); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); position: relative; }
+        .drop-zone { border: 2px dashed var(--accent); border-radius: var(--radius); padding: 40px; text-align: center; background: rgba(99, 102, 241, 0.05); margin-bottom: 20px; }
+        .progress-bar { width: 100%; height: 10px; background: var(--border); border-radius: 5px; margin: 20px 0; overflow: hidden; }
         .progress-fill { height: 100%; background: var(--accent); width: 0%; transition: width 0.3s; }
-        .options-grid { display: grid; gap: 10px; margin-top: 20px; }
-        .option-btn { background: var(--surface); border: 2px solid var(--border); padding: 15px; border-radius: var(--radius); text-align: left; }
+        .option-btn { background: var(--surface); border: 2px solid var(--border); padding: 15px; border-radius: var(--radius); text-align: left; width: 100%; margin-bottom: 10px; display: block; font-size: 1rem; }
         .option-btn.selected { border-color: var(--accent); background: rgba(99, 102, 241, 0.05); }
         .option-btn.correct { background: var(--success-light); border-color: var(--success); }
         .option-btn.wrong { background: var(--danger-light); border-color: var(--danger); }
         .hidden { display: none !important; }
         #loadingOverlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.9); z-index:1000; display:flex; flex-direction:column; justify-content:center; align-items:center; }
-        .admin-lock { text-align: right; margin-bottom: 10px; }
+        .admin-controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
     </style>
 </head>
 <body>
 
 <div id="loadingOverlay" class="hidden">
-    <div style="border: 4px solid #f3f3f3; border-top: 4px solid var(--accent); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite;"></div>
-    <h3 id="loadingText" style="margin-top: 15px;">Processant...</h3>
+    <div style="border: 5px solid #f3f3f3; border-top: 5px solid var(--accent); border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite;"></div>
+    <h3 id="loadingText" style="margin-top: 20px;">Processant...</h3>
 </div>
 
 <div class="container">
-    <div class="admin-lock">
-        <button class="btn-secondary" onclick="loginAdmin()" id="btnAdmin">🔓 Admin</button>
+    <div class="admin-controls">
+        <h1>Els meus Tests</h1>
+        <button class="btn-secondary" onclick="toggleAdmin()" id="btnAdmin">🔓 Login Admin</button>
     </div>
 
     <div id="view-dashboard" class="view active">
-        <h1>Els meus Tests</h1>
         <div class="drop-zone hidden" id="adminZone">
             <h3>Pujar nou PDF</h3>
+            <p>Selecciona un PDF per generar preguntes automàticament</p>
             <input type="file" id="fileInput" accept="application/pdf" style="display:none">
-            <button class="btn-primary" onclick="document.getElementById('fileInput').click()">Seleccionar Arxiu</button>
+            <button class="btn-primary" style="width:auto" onclick="document.getElementById('fileInput').click()">Tria el fitxer PDF</button>
         </div>
         <div id="testList" class="grid"></div>
     </div>
 
     <div id="view-config" class="view">
-        <h1 id="configTestName">Configuració</h1>
+        <h2 id="configTestName">Configuració</h2>
         <div class="card">
-            <label>Mode:</label>
-            <select id="configMode" class="form-control">
-                <option value="practice">Pràctica (Saber l'error al moment)</option>
-                <option value="exam">Examen (Resultats al final)</option>
+            <label>Mode de joc:</label>
+            <select id="configMode" style="width:100%; padding:10px; margin: 10px 0;">
+                <option value="practice">Mode Pràctica (Correcció instantània)</option>
+                <option value="exam">Mode Examen (Resultats al final)</option>
             </select>
-            <button class="btn-primary" style="width:100%" onclick="startTest()">Començar Test</button>
+            <button class="btn-primary" onclick="startTest()">Començar</button>
             <button class="btn-secondary" style="width:100%; margin-top:10px" onclick="switchView('dashboard')">Enrere</button>
         </div>
     </div>
 
     <div id="view-test" class="view">
         <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
-        <h3 id="questionText"></h3>
-        <div id="optionsGrid" class="options-grid"></div>
-        <div id="explanationBox" class="card hidden" style="margin-top:20px; background:#f8fafc"></div>
-        <div style="margin-top:30px; display:flex; justify-content:space-between">
-            <button id="btnPrev" class="btn-secondary" onclick="prevQuestion()">Anterior</button>
-            <button id="btnNext" class="btn-primary" onclick="nextQuestion()">Següent</button>
-            <button id="btnSubmit" class="btn-primary hidden" onclick="finishTest()">Finalitzar</button>
+        <h2 id="questionText" style="margin-bottom:20px"></h2>
+        <div id="optionsGrid"></div>
+        <div id="explanationBox" class="card hidden" style="margin-top:20px; background:#f1f5f9; border-left: 4px solid var(--accent);"></div>
+        <div style="margin-top:30px; display:flex; gap:10px">
+            <button id="btnPrev" class="btn-secondary" style="flex:1" onclick="prevQuestion()">Anterior</button>
+            <button id="btnNext" class="btn-primary" style="flex:2" onclick="nextQuestion()">Següent</button>
+            <button id="btnSubmit" class="btn-primary hidden" style="flex:2" onclick="finishTest()">Entregar Test</button>
         </div>
     </div>
 
     <div id="view-results" class="view">
         <div class="card" style="text-align:center">
-            <h1 id="resultScore" style="font-size:4rem; color:var(--accent)">0%</h1>
-            <p id="resultDetails"></p>
+            <h1 id="resultScore" style="font-size:5rem; color:var(--accent)">0%</h1>
+            <p id="resultDetails" style="margin-bottom:20px"></p>
             <button class="btn-primary" onclick="switchView('dashboard')">Tornar a l'Inici</button>
         </div>
     </div>
 </div>
 
 <script>
-// --- CONFIGURACIÓ PRIVADA ---
-const CONTRASENYA_ADMIN = "132465"; // <--- CANVIA AIXÒ!
+// ==========================================
+// CONFIGURACIÓ (MODIFICA AIXÒ)
+// ==========================================
+const MI_PASS = "132465"; 
+const GEMINI_KEY = "LA_TEVA_GEMINI_API_KEY_AQUI";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAYJ3reH4R2FCzmtc7qVgSevnKePP5ySsM",
@@ -107,54 +107,54 @@ const firebaseConfig = {
   appId: "1:166341509112:web:e3840650f9f8131bdc200d"
 };
 
-// Inicialització
+// ==========================================
+// INICIALITZACIÓ
+// ==========================================
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-// Gestió d'accés
-function loginAdmin() {
-    const pass = prompt("Introdueix la contrasenya d'administrador:");
-    if (pass === CONTRASENYA_ADMIN) {
-        localStorage.setItem('es_admin', 'true');
+function toggleAdmin() {
+    if (localStorage.getItem('is_admin') === 'true') {
+        localStorage.removeItem('is_admin');
         location.reload();
     } else {
-        alert("Contrasenya incorrecta");
+        const p = prompt("Contrasenya d'Admin:");
+        if (p === MI_PASS) {
+            localStorage.setItem('is_admin', 'true');
+            location.reload();
+        } else { alert("Incorrecta"); }
     }
 }
 
-const esAdmin = localStorage.getItem('es_admin') === 'true';
+const esAdmin = localStorage.getItem('is_admin') === 'true';
 if(esAdmin) {
     document.getElementById('adminZone').classList.remove('hidden');
-    document.getElementById('btnAdmin').innerText = "🔒 Sortir Admin";
-    document.getElementById('btnAdmin').onclick = () => {
-        localStorage.removeItem('es_admin');
-        location.reload();
-    };
+    document.getElementById('btnAdmin').innerText = "🔒 Logout Admin";
 }
 
-// Lògica de dades
-const Storage = {
-    getTests: async () => {
-        const snap = await db.collection('meus_tests').get();
-        return snap.docs.map(doc => doc.data());
-    },
-    saveTest: async (t) => await db.collection('meus_tests').doc(t.id).set(t),
-    deleteTest: async (id) => {
-        if(confirm("Segur que vols esborrar-lo?")) {
-            await db.collection('meus_tests').doc(id).delete();
-            renderDashboard();
-        }
+// ==========================================
+// LÒGICA DE DADES
+// ==========================================
+async function getTests() {
+    const snap = await db.collection('meus_tests').get();
+    return snap.docs.map(doc => doc.data());
+}
+
+async function deleteTest(id) {
+    if(confirm("Segur?")) {
+        await db.collection('meus_tests').doc(id).delete();
+        renderDashboard();
     }
-};
+}
 
-// Motor de PDF i IA
-async function handleFiles(e) {
+// ==========================================
+// PROCESSAMENT PDF I IA
+// ==========================================
+document.getElementById('fileInput').onchange = async (e) => {
     const file = e.target.files[0];
-    const key = localStorage.getItem('gemini_api_key') || prompt("Introdueix la teva Gemini API Key:");
-    if(!key) return;
-    localStorage.setItem('gemini_api_key', key);
+    if(!file) return;
 
-    showLoader("Llegint PDF i enviant a Gemini...");
+    showLoader("Llegint PDF...");
     try {
         const arrayBuffer = await file.arrayBuffer();
         const pdf = await pdfjsLib.getDocument({data: arrayBuffer}).promise;
@@ -162,47 +162,59 @@ async function handleFiles(e) {
         for (let i = 1; i <= pdf.numPages; i++) {
             const page = await pdf.getPage(i);
             const content = await page.getTextContent();
-            text += content.items.map(it => it.str).join(" ");
+            text += content.items.map(it => it.str).join(" ") + " ";
         }
 
-        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${key}`, {
+        showLoader("Gemini està creant les preguntes...");
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_KEY}`, {
             method: 'POST',
-            body: JSON.stringify({ contents: [{ parts: [{ text: `Analyze this text and generate a multiple choice test in JSON format [ { "question": "", "options": ["","","",""], "correctIndex": 0, "explanation": "" } ]. Text: ${text}` }] }] })
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                contents: [{ parts: [{ text: `Act as a teacher. Create a multiple choice test from this text. Return ONLY a JSON array with this structure: [{"question": "...", "options": ["A", "B", "C", "D"], "correctIndex": 0, "explanation": "..."}]. Text: ${text.substring(0, 20000)}` }] }]
+            })
         });
-        
-        const data = await res.json();
-        let rawJson = data.candidates[0].content.parts[0].text;
-        const cleanJson = JSON.parse(rawJson.substring(rawJson.indexOf('['), rawJson.lastIndexOf(']') + 1));
 
-        const test = { id: crypto.randomUUID(), name: file.name.replace('.pdf',''), questions: cleanJson, stats: {attempts:0, bestScore:0} };
-        await Storage.saveTest(test);
+        const data = await response.json();
+        let rawText = data.candidates[0].content.parts[0].text;
+        
+        // NETEJA EXTREMA DEL JSON
+        const start = rawText.indexOf('[');
+        const end = rawText.lastIndexOf(']');
+        const cleanJson = JSON.parse(rawText.substring(start, end + 1));
+
+        const newTest = {
+            id: crypto.randomUUID(),
+            name: file.name.replace(".pdf", ""),
+            questions: cleanJson,
+            stats: { attempts: 0, bestScore: 0 }
+        };
+
+        await db.collection('meus_tests').doc(newTest.id).set(newTest);
         hideLoader();
         renderDashboard();
-    } catch(err) {
-        alert("Error: " + err.message);
+    } catch (err) {
+        console.error(err);
+        alert("Error al processar: " + err.message);
         hideLoader();
     }
-}
+};
 
-document.getElementById('fileInput').onchange = handleFiles;
-
-// UI i Navegació
-function switchView(id) {
-    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-    document.getElementById('view-' + id).classList.add('active');
-}
-
+// ==========================================
+// INTERFÍCIE (UI)
+// ==========================================
 async function renderDashboard() {
-    const tests = await Storage.getTests();
     const list = document.getElementById('testList');
+    list.innerHTML = "Carregant tests...";
+    const tests = await getTests();
+    
+    if(tests.length === 0) { list.innerHTML = "No hi ha tests. Puja un PDF per començar."; return; }
+
     list.innerHTML = tests.map(t => `
         <div class="card">
             <h3>${t.name}</h3>
-            <p>${t.questions.length} preguntes</p>
-            <div style="margin-top:10px">
-                <button class="btn-primary" onclick="openConfig('${t.id}')">Obrir</button>
-                ${esAdmin ? `<button class="btn-danger" onclick="Storage.deleteTest('${t.id}')">Esborrar</button>` : ''}
-            </div>
+            <p style="color:var(--text-muted)">${t.questions.length} preguntes</p>
+            <button class="btn-primary" onclick="openConfig('${t.id}')">Fer Test</button>
+            ${esAdmin ? `<button class="btn-danger" style="margin-top:10px" onclick="deleteTest('${t.id}')">Esborrar</button>` : ''}
         </div>
     `).join('');
 }
@@ -211,8 +223,13 @@ let activeTest = null;
 let currentIdx = 0;
 let userAnswers = [];
 
+function switchView(id) {
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    document.getElementById('view-' + id).classList.add('active');
+}
+
 async function openConfig(id) {
-    const tests = await Storage.getTests();
+    const tests = await getTests();
     activeTest = tests.find(t => t.id === id);
     document.getElementById('configTestName').innerText = activeTest.name;
     switchView('config');
@@ -227,8 +244,8 @@ function startTest() {
 
 function renderQuestion() {
     const q = activeTest.questions[currentIdx];
-    document.getElementById('questionText').innerText = q.question;
-    document.getElementById('progressFill').style.width = ((currentIdx+1)/activeTest.questions.length)*100 + "%";
+    document.getElementById('questionText').innerText = (currentIdx + 1) + ". " + q.question;
+    document.getElementById('progressFill').style.width = ((currentIdx + 1) / activeTest.questions.length) * 100 + "%";
     
     const grid = document.getElementById('optionsGrid');
     grid.innerHTML = q.options.map((opt, i) => `
@@ -236,8 +253,9 @@ function renderQuestion() {
     `).join('');
 
     document.getElementById('explanationBox').classList.add('hidden');
-    document.getElementById('btnPrev').classList.toggle('hidden', currentIdx === 0);
-    const isLast = currentIdx === activeTest.questions.length - 1;
+    document.getElementById('btnPrev').disabled = (currentIdx === 0);
+    
+    const isLast = (currentIdx === activeTest.questions.length - 1);
     document.getElementById('btnNext').classList.toggle('hidden', isLast);
     document.getElementById('btnSubmit').classList.toggle('hidden', !isLast);
 
@@ -257,9 +275,10 @@ function showFeedback() {
     btns.forEach((b, i) => {
         if(i === q.correctIndex) b.classList.add('correct');
         else if(i === userAnswers[currentIdx]) b.classList.add('wrong');
+        b.style.pointerEvents = "none";
     });
     const exp = document.getElementById('explanationBox');
-    exp.innerText = q.explanation;
+    exp.innerText = "💡 " + q.explanation;
     exp.classList.remove('hidden');
 }
 
@@ -269,7 +288,7 @@ function prevQuestion() { currentIdx--; renderQuestion(); }
 function finishTest() {
     let correct = 0;
     activeTest.questions.forEach((q, i) => { if(userAnswers[i] === q.correctIndex) correct++; });
-    const score = Math.round((correct/activeTest.questions.length)*100);
+    const score = Math.round((correct / activeTest.questions.length) * 100);
     document.getElementById('resultScore').innerText = score + "%";
     document.getElementById('resultDetails').innerText = `Has encertat ${correct} de ${activeTest.questions.length} preguntes.`;
     switchView('results');
@@ -280,5 +299,6 @@ function hideLoader() { document.getElementById('loadingOverlay').classList.add(
 
 window.onload = renderDashboard;
 </script>
+<style> @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } } </style>
 </body>
 </html>
