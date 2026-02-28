@@ -170,7 +170,7 @@ document.getElementById('fileInput').onchange = async (e) => {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                contents: [{ parts: [{ text: `Act as a teacher. Create a multiple choice test from this text. Return ONLY a JSON array with this structure: [{"question": "...", "options": ["A", "B", "C", "D"], "correctIndex": 0, "explanation": "..."}]. Text: ${text.substring(0, 20000)}` }] }]
+                contents: [{ parts: [{ text: `text: `Actua com un professor. Crea un test d'opció múltiple a partir d'aquest text. Totes les preguntes, opcions i explicacions han d'estar redactades EN CATALÀ. Retorna ÚNICAMENT un array JSON amb aquesta estructura: [{"question": "...", "options": ["A", "B", "C", "D"], "correctIndex": 0, "explanation": "..."}]. Text: ${text.substring(0, 20000)}` }] }]
             })
         });
 
